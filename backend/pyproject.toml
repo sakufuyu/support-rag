@@ -21,3 +21,6 @@ dependencies = [
 dev = [
     "ruff>=0.15.14",
 ]
+evals = [
+    "requests>=2.34.2",
+]

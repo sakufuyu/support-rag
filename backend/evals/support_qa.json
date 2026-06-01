@@ -1,0 +1,12 @@
+[
+  {
+    "question": "What is SupportRAG built to do?",
+    "expected_source": "README.md",
+    "expected_keywords": ["RAG", "technical support", "source-grounded"]
+  },
+  {
+    "question": "What services are used in the SupportRAG AWS architecture?",
+    "expected_source": "README.md",
+    "expected_keywords": ["CloudFront", "App Runner", "RDS PostgreSQL"]
+  }
+]
