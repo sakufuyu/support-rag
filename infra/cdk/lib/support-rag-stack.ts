@@ -67,7 +67,7 @@ export class SupportRagStack extends cdk.Stack {
     });
 
     const openAiSecret = new secretsmanager.Secret(this, "OpenAISecret", {
-      secretName: "support-rag/open-api-key",
+      secretName: "support-rag/openai-api-key",
       description: "OpneAI API key for SupportRAG",
     });
 
@@ -126,6 +126,38 @@ export class SupportRagStack extends cdk.Stack {
         memoryLimitMiB: 1024,
       }
     );
+
+    const openAiSecretForContainer = secretsmanager.Secret.fromSecretNameV2(
+      this,
+      "ImportedOpenAISecret",
+      "support-rag/openai-api-key"
+    );
+
+    const dbSecretForContainer = database.secret!;
+
+    const backendContainer = taskDefinition.addContainer("BackendContainer", {
+      image: ecs.ContainerImage.fromEcrRepository(backendRepo, "latest"),
+      logging: ecs.LogDrivers.awsLogs({
+        streamPrefix: "backend",
+        logGroup: backendLogGroup,
+      }),
+      environment: {
+        ACCESS_CODE: "demo-access-code",
+        DATABASE_HOST: database.dbInstanceEndpointAddress,
+        DATABASE_PORT: "5432",
+        DATABASE_NAME: "support_rag",
+      },
+      secrets: {
+        OPENAI_API_KEY: ecs.Secret.fromSecretsManager(openAiSecretForContainer),
+        DATABASE_USERNAME: ecs.Secret.fromSecretsManager(dbSecretForContainer, "username"),
+        DATABASE_PASSWORD: ecs.Secret.fromSecretsManager(dbSecretForContainer, "password"),
+      },
+    });
+
+    backendContainer.addPortMappings({
+      containerPort: 8000,
+      protocol: ecs.Protocol.TCP,
+    });
 
     new cdk.CfnOutput(this, "FrontendBucketName", {
       value: frontendBucket.bucketName,
