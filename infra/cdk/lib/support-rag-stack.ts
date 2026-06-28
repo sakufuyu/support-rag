@@ -154,6 +154,80 @@ export class SupportRagStack extends cdk.Stack {
       },
     });
 
+    const alb = new elbv2.ApplicationLoadBalancer(this, "BackendAlb", {
+      vpc,
+      internetFacing: true,
+      securityGroup: albSg,
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC,
+      },
+    });
+
+    const targetGroup = elbv2.ApplicationTargetGroup(this, "BackendTargetGroup", {
+      vpc,
+      port: 8000,
+      protocol: elbv2.ApplicationProtocol.HTTP,
+      targetType: elbv2.TargetType.IP,
+      healthCheck: {
+        path: "/api/health",
+        healthyHttpCodes: "200",
+        interval: cdk.Duration.seconds(30),
+        timeout: cdk.Duration.seconds(5),
+      },
+    });
+
+    const listener = alb.albListener("HTTPListener", {
+      port: 80,
+      protocol: elbv2.ApplicationProtocol.HTTP,
+      open: true,
+    });
+
+    listener.addTargetGroups("BackendTargetGroupAttachment", {
+      targetGroups: [targetGroup],
+    });
+
+    const backendService = new ecs.FargateService(this, "BackendService", {
+      cluster,
+      taskDefinition,
+      desiredCount: 1,
+      assignPublicIp: false,
+      securityGroups: [ecsSg],
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+      },
+      enableExecuteCommand: true,
+      circuitBreaker: {
+        rollback: true,
+      },
+    });
+
+    const scaling = backendService.autoScaleTaskCount({
+      minCapacity: 1,
+      maxCapacity: 3,
+    });
+
+    scaling.scaleOnCpuUtilization("CpuScaling", {
+      targetUtilizationPercent: 80,
+    });
+
+    scaling.scaleOnMemoryUtilization("MemoryScaling", {
+      targetUtilizationPercent: 80,
+    });
+
+    distribution.addBehavior(
+      "/api/*",
+      new origins.LoadBalancerV2Origin(alb, {
+        protocolPolicy: cloudfront.OriginProtocolPolicy.HTTP_ONLY,
+      }),
+      {
+        allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+        cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
+        cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+        originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      }
+    );
+
     backendContainer.addPortMappings({
       containerPort: 8000,
       protocol: ecs.Protocol.TCP,
@@ -177,6 +251,14 @@ export class SupportRagStack extends cdk.Stack {
 
     new cdk.CfnOutput(this, "OpenAISecretName", {
       value: openAiSecret.secretName,
+    });
+
+    new cdk.CfnOutput(this, "BackendAlbDnsName", {
+      value: alb.loadBalancerDnsName,
+    });
+
+    new cdk.CfnOutput(this, "BackendApiViaCloudFront", {
+      value: `https://${distribution.distributionDomainName}/api/health`,
     });
   }
 }
