@@ -7,3 +7,12 @@ node_modules/
 dist/
 cdk.out/
 .DS_Store
+
+# GCP
+.env
+.env.*
+!.env.example
+*service-account*.json
+*credentials*.json
+application_default_credentials.json
+.gcloud/

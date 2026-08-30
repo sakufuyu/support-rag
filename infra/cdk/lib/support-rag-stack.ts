@@ -124,6 +124,10 @@ export class SupportRagStack extends cdk.Stack {
       {
         cpu: 512,
         memoryLimitMiB: 1024,
+        runtimePlatform: {
+          cpuArchitecture: ecs.CpuArchitecture.ARM64,
+          operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
+        },
       }
     );
 
@@ -154,6 +158,11 @@ export class SupportRagStack extends cdk.Stack {
       },
     });
 
+    backendContainer.addPortMappings({
+      containerPort: 8000,
+      protocol: ecs.Protocol.TCP,
+    });
+
     const alb = new elbv2.ApplicationLoadBalancer(this, "BackendAlb", {
       vpc,
       internetFacing: true,
@@ -163,7 +172,7 @@ export class SupportRagStack extends cdk.Stack {
       },
     });
 
-    const targetGroup = elbv2.ApplicationTargetGroup(this, "BackendTargetGroup", {
+    const targetGroup = new elbv2.ApplicationTargetGroup(this, "BackendTargetGroup", {
       vpc,
       port: 8000,
       protocol: elbv2.ApplicationProtocol.HTTP,
@@ -176,7 +185,7 @@ export class SupportRagStack extends cdk.Stack {
       },
     });
 
-    const listener = alb.albListener("HTTPListener", {
+    const listener = alb.addListener("HTTPListener", {
       port: 80,
       protocol: elbv2.ApplicationProtocol.HTTP,
       open: true,
@@ -200,6 +209,8 @@ export class SupportRagStack extends cdk.Stack {
         rollback: true,
       },
     });
+
+    backendService.attachToApplicationTargetGroup(targetGroup);
 
     const scaling = backendService.autoScaleTaskCount({
       minCapacity: 1,
@@ -227,11 +238,6 @@ export class SupportRagStack extends cdk.Stack {
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       }
     );
-
-    backendContainer.addPortMappings({
-      containerPort: 8000,
-      protocol: ecs.Protocol.TCP,
-    });
 
     new cdk.CfnOutput(this, "FrontendBucketName", {
       value: frontendBucket.bucketName,
