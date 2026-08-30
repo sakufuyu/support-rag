@@ -20,7 +20,6 @@ class SourceChunk(BaseModel):
 
 class QueryRequest(BaseModel):
     question: str
-    access_code: str | None = None
 
 
 class QueryResponse(BaseModel):

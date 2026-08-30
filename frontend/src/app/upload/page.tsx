@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { uploadDocument } from "@/lib/api";
+import { access } from "fs";
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<string>("");
+  const [accessCode, setAccessCode] = useState("");
 
   async function handleUpload() {
     if (!file) return;
@@ -13,7 +15,7 @@ export default function UploadPage() {
     setStatus("Uploading...");
 
     try {
-      const result = await uploadDocument(file);
+      const result = await uploadDocument(file, accessCode);
       setStatus(`Uploaded: ${result.filename}`);
     } catch (error) {
       setStatus(`Error: ${String(error)}`);
@@ -23,6 +25,14 @@ export default function UploadPage() {
   return (
     <main className="max-w-3xl mx-auto p-8">
       <h1 className="text-2xl font-bold mb-4">Upload Document</h1>
+
+      <label className="block mb-2 font-medium">Access Code</label>
+      <input
+        type="password"
+        value={accessCode}
+        onChange={(e) => setAccessCode(e.target.value)}
+        className="border rounded p-2 w-full mb-4"
+      />
 
       <input
         type="file"

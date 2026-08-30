@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.config import settings
 from app.routers import health, documents, query
 
 app = FastAPI(title="SupportRAG API")
@@ -9,7 +10,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://d126ozpzhxt50u.cloudfront.net"
+        settings.frontend_origin,
     ],
     allow_credentials=True,
     allow_methods=["*"],

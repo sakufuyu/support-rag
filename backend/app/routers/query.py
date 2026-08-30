@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.config import settings
+from app.auth import verify_access_code
 from app.db import get_db
 from app.rag import answer_question
 from app.schemas import QueryRequest, QueryResponse, SourceChunk
@@ -10,10 +10,12 @@ router = APIRouter(prefix="/query", tags=["query"])
 
 
 @router.post("", response_model=QueryResponse)
-def query_documents(request: QueryRequest, db: Session = Depends(get_db)):
-    if request.access_code != settings.access_code:
-        raise HTTPException(status_code=401, detail="Invalid access code")
-    
+def query_documents(
+    request: QueryRequest,
+    _: None = Depends(verify_access_code),
+    db: Session = Depends(get_db)
+):
+
     answer, sources_raw = answer_question(db, request.question)
 
     sources = [

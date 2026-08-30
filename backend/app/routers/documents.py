@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
+from app.auth import verify_access_code
 from app.db import get_db
 from app.models import Document, Chunk
 from app.chunking import chunk_text
@@ -13,6 +14,7 @@ router = APIRouter(prefix="/documents", tags=["documents"])
 @router.post("/upload", response_model=DocumentResponse)
 async def upload_document(
     file: UploadFile = File(...),
+    _: None = Depends(verify_access_code),
     db: Session = Depends(get_db),
 ):
     allowed_extensions = (".txt", ".md")
@@ -54,5 +56,8 @@ async def upload_document(
 
 
 @router.get("", response_model=list[DocumentResponse])
-def list_documents(db: Session = Depends(get_db)):
+def list_documents(
+    _: None = Depends(verify_access_code),
+    db: Session = Depends(get_db)
+):
     return db.query(Document).order_by(Document.created_at.desc()).all()

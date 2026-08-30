@@ -1,6 +1,6 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
-export async function uploadDocument(file: File) {
+export async function uploadDocument(file: File, accessCode: string) {
     // Send a POST request to the backend endpoint defined
     // in ./backend/app/routers/documents.py
 
@@ -11,8 +11,9 @@ export async function uploadDocument(file: File) {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch(`${API_BASE_URL}/documents/upload`, {
+    const response = await fetch(`${API_BASE_URL}/api/documents/upload`, {
         method: "POST",
+        headers: { "X-Access-Code": accessCode },
         body: formData,
     });
 
@@ -34,15 +35,13 @@ export async function queryDocuments(question: string, accessCode: string) {
 
      // The request body must match the backend QueryRequest schema in ./backend/app/schemas.py
      // Set body to right schema in this (question and access_code).
-    const response = await fetch(`${API_BASE_URL}/query`, {
+    const response = await fetch(`${API_BASE_URL}/api/query`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "X-Access-Code": accessCode,
         },
-        body: JSON.stringify({
-            question,
-            access_code: accessCode,
-        }),
+        body: JSON.stringify({ question }),
     });
 
     if (!response.ok) {

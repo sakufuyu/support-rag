@@ -10,7 +10,8 @@ class Settings(BaseSettings):
     database_username: str | None = None
     database_password: str | None = None
 
-    access_code: str = "demo-access-code"
+    access_code: str
+    frontend_origin: str = "http://localhost:3000"
 
     class Config:
         env_file = ".env"

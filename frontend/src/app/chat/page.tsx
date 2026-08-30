@@ -12,7 +12,7 @@ type Source = {
 
 export default function ChatPage() {
   const [question, setQuestion] = useState("");
-  const [accessCode, setAccessCode] = useState("demo-access-code");
+  const [accessCode, setAccessCode] = useState("");
   const [answer, setAnswer] = useState("");
   const [sources, setSources] = useState<Source[]>([]);
   const [loading, setLoading] = useState(false);
@@ -39,6 +39,7 @@ export default function ChatPage() {
 
       <label className="block mb-2 font-medium">Access Code</label>
       <input
+        type="password"
         value={accessCode}
         onChange={(e) => setAccessCode(e.target.value)}
         className="border rounded p-2 w-full mb-4"
