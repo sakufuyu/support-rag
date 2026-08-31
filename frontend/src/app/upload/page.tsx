@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { uploadDocument } from "@/lib/api";
-import { access } from "fs";
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);

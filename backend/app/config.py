@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     database_password: str | None = None
 
     access_code: str
+    query_access_code: str
     frontend_origin: str = "http://localhost:3000"
 
     class Config:

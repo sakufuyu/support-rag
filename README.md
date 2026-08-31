@@ -4,6 +4,10 @@ SupportRAG is a production-style RAG web application for technical support workf
 
 It allows users to upload technical documents such as runbooks, FAQs, and incident notes, then ask questions and receive source-grounded answers using OpenAI API, PostgreSQL + pgvector, FastAPI, and Next.js.
 
+## Live Demo
+
+https://support-rag-portfolio.web.app/
+
 ## Why I Built This
 
 Many support engineers need to search across internal runbooks, troubleshooting guides, and incident notes. Keyword search often misses semantically related information, while general LLM answers may hallucinate.
@@ -23,16 +27,31 @@ This project demonstrates how to build a RAG system that retrieves relevant sour
 - Next.js
 - TypeScript
 
+### Cloud Infrastructure
+- Firebase Hosting
+- Google Cloud Run
+- Cloud SQL for PostgreSQL
+- Secret Manager
+
+## Deployment
+
+The application is deployed on Google Cloud in the `us-west1` region. The statically exported Next.js frontend is served by Firebase Hosting, while the FastAPI backend runs on Cloud Run and connects to Cloud SQL for PostgreSQL with pgvector. API keys, database credentials, and access codes are provided to the backend through Secret Manager rather than stored in the repository.
+
 ## Architecture
 
 ```text
-User
-  ↓
-Next.js frontend
-  ↓
-FastAPI backend
-  ├── PostgreSQL + pgvector
-  └── OpenAI API
+Browser
+  │
+  ▼
+Firebase Hosting
+(Next.js static frontend)
+  │ HTTPS
+  ▼
+Cloud Run
+(FastAPI backend)
+  ├── Cloud SQL for PostgreSQL + pgvector
+  ├── OpenAI API
+  └── Secret Manager
 ```
 
 ## RAG Pipeline
