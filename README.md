@@ -3,7 +3,7 @@
 > [!IMPORTANT]
 > ## Try the Live RAG Demo
 >
-> TXT files containing **fictional histories of Google and Amazon** have been uploaded to the [RAG demo application](https://support-rag-portfolio.web.app/).
+> TXT files containing **deliberately fabricated, false information about Google and Amazon** have been uploaded to the [RAG demo application](https://support-rag-portfolio.web.app/) for demonstration purposes.
 >
 > **Open the Chat page, enter the access code `query-demo-2026`, and try asking questions about Amazon and Google.**
 >
@@ -11,9 +11,9 @@
 >
 > The demo data is entirely fictional and does not represent the actual history of, or facts about, Google or Amazon.
 
-SupportRAG is a production-style RAG web application for technical support workflows.
+SupportRAG is a production-style RAG web application that turns uploaded documents into a searchable knowledge base.
 
-It allows users to upload technical documents such as runbooks, FAQs, and incident notes, then ask questions and receive source-grounded answers using OpenAI API, PostgreSQL + pgvector, FastAPI, and Next.js.
+It allows users to upload text documents, ask questions about their contents, and receive source-grounded answers with citations using OpenAI API, PostgreSQL + pgvector, FastAPI, and Next.js.
 
 ## Demo Video
 
@@ -25,7 +25,7 @@ Watch the actual SupportRAG demo to see document upload, retrieval, and source-g
 
 ## Why I Built This
 
-Many support engineers need to search across internal runbooks, troubleshooting guides, and incident notes. Keyword search often misses semantically related information, while general LLM answers may hallucinate.
+The idea grew out of technical support work, where engineers often need to search across internal runbooks, troubleshooting guides, and incident notes. Keyword search can miss semantically related information, while general LLM answers may hallucinate. The same challenge applies to many other document collections, so the application itself is designed as a general-purpose RAG system rather than being limited to support workflows.
 
 This project demonstrates how to build a RAG system that retrieves relevant source chunks, generates grounded answers, shows citations, and tracks cost and latency through a web interface.
 
