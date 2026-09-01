@@ -7,11 +7,21 @@
 >
 > **Open the Chat page, enter the access code `query-demo-2026`, and try asking questions about Amazon and Google.**
 >
+> Document uploads are restricted, and the upload access code is not publicly shared to protect the database.
+>
 > The demo data is entirely fictional and does not represent the actual history of, or facts about, Google or Amazon.
 
 SupportRAG is a production-style RAG web application for technical support workflows.
 
 It allows users to upload technical documents such as runbooks, FAQs, and incident notes, then ask questions and receive source-grounded answers using OpenAI API, PostgreSQL + pgvector, FastAPI, and Next.js.
+
+## Demo Video
+
+Watch the actual SupportRAG demo to see document upload, retrieval, and source-grounded chat in action:
+
+[![Watch the SupportRAG demo on YouTube](https://img.youtube.com/vi/ByrCkwRvzG4/hqdefault.jpg)](https://www.youtube.com/watch?v=ByrCkwRvzG4)
+
+[Watch the demo video on YouTube](https://www.youtube.com/watch?v=ByrCkwRvzG4)
 
 ## Why I Built This
 
