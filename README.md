@@ -1,12 +1,17 @@
 # support-rag
 
+> [!IMPORTANT]
+> ## Try the Live RAG Demo
+>
+> TXT files containing **fictional histories of Google and Amazon** have been uploaded to the [RAG demo application](https://support-rag-portfolio.web.app/).
+>
+> **Open the Chat page, enter the access code `query-demo-2026`, and try asking questions about Amazon and Google.**
+>
+> The demo data is entirely fictional and does not represent the actual history of, or facts about, Google or Amazon.
+
 SupportRAG is a production-style RAG web application for technical support workflows.
 
 It allows users to upload technical documents such as runbooks, FAQs, and incident notes, then ask questions and receive source-grounded answers using OpenAI API, PostgreSQL + pgvector, FastAPI, and Next.js.
-
-## Live Demo
-
-https://support-rag-portfolio.web.app/
 
 ## Why I Built This
 
