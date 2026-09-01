@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { queryDocuments } from "@/lib/api";
 
 type Source = {
@@ -18,12 +19,20 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
 
   async function handleAsk() {
+    const trimmedQuestion = question.trim();
+
+    if (!trimmedQuestion) {
+      setAnswer("Please enter a question.");
+      setSources([]);
+      return;
+    }
+
     setLoading(true);
     setAnswer("");
     setSources([]);
 
     try {
-      const result = await queryDocuments(question, accessCode);
+      const result = await queryDocuments(trimmedQuestion, accessCode);
       setAnswer(result.answer);
       setSources(result.sources);
     } catch (error) {
@@ -35,6 +44,13 @@ export default function ChatPage() {
 
   return (
     <main className="max-w-4xl mx-auto p-8">
+      <Link
+        href="/"
+        className="mb-6 inline-block rounded border px-4 py-2 hover:bg-gray-100"
+      >
+        ← Back to Home
+      </Link>
+
       <h1 className="text-2xl font-bold mb-4">Ask SupportRAG</h1>
 
       <label className="block mb-2 font-medium">Access Code</label>
@@ -50,13 +66,13 @@ export default function ChatPage() {
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
         className="border rounded p-2 w-full h-32 mb-4"
-        placeholder="What should I check when an RDS connection times out?"
+        placeholder="Please tell me the stories of how Google and Amazon were founded?"
       />
 
       <button
         onClick={handleAsk}
-        disabled={loading}
-        className="border px-4 py-2 rounded"
+        disabled={loading || !question.trim()}
+        className="border px-4 py-2 rounded disabled:cursor-not-allowed disabled:opacity-50"
       >
         {loading ? "Thinking..." : "Ask"}
       </button>
